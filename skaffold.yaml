@@ -1,30 +1,29 @@
-apiVersion: skaffold/v1beta2
+apiVersion: skaffold/v1beta7
 kind: Config
 build:
   artifacts:
-  - image: changeme
-    context: .
-    docker: {}
+    - image: changeme
+      context: .
+      docker: {}
   tagPolicy:
     envTemplate:
-      template: '{{.DOCKER_REGISTRY}}/esurek8s/api-jva-hello-world:{{.VERSION}}'
+      template: "{{.DOCKER_REGISTRY}}/esurek8s/api-jva-hello-world:{{.VERSION}}"
   local: {}
 deploy:
   kubectl: {}
 profiles:
-- name: dev
-  build:
-    artifacts:
-    - docker: {}
-    tagPolicy:
-      envTemplate:
-        template: '{{.DOCKER_REGISTRY}}/esurek8s/api-jva-hello-world:{{.DIGEST_HEX}}'
-    local: {}
-  deploy:
-    helm:
-      releases:
-      - name: api-jva-hello-world
-        chartPath: charts/api-jva-hello-world
-        setValueTemplates:
-          image.repository: '{{.DOCKER_REGISTRY}}/esurek8s/api-jva-hello-world'
-          image.tag: '{{.DIGEST_HEX}}'
+  - name: dev
+    build:
+      tagPolicy:
+        dateTime: {}
+      artifacts:
+      - image: 550964964577.dkr.ecr.eu-west-1.amazonaws.com/esurek8s/api-jva-hello-world
+      local: {}
+    deploy:
+      helm:
+        releases:
+          - name: api-jva-hello-world
+            chartPath: charts/api-jva-hello-world
+            setValueTemplates:
+              image.repository: "550964964577.dkr.ecr.eu-west-1.amazonaws.com/esurek8s/api-jva-hello-world"
+              image.tag: '{{.DIGEST}}'
